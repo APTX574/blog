@@ -1,6 +1,4 @@
 <template>
-  <transition name="fade" >
-    <div>
       <el-card>
         <h2>{{ blog.title }}</h2>
         <div class="time">
@@ -8,9 +6,6 @@
         </div>
         <v-md-preview :text=blog.main></v-md-preview>
       </el-card>
-
-    </div>
-  </transition>
 </template>
 <script>
 import axios from "axios";
@@ -56,14 +51,5 @@ export default {
 }
 
 
-.fade-leave {
-  opacity: 1
-}
-.fade-leave-active {
-  transition: all 1s;
-}
-.fade-leave-to {
-  opcaity: 0
-}
 
 </style>
