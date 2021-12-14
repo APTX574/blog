@@ -18,22 +18,47 @@ export default {
   data() {
     return {
       text: '',
+      url: process.env.VUE_APP_BASE_URL
 
     };
   },
   computed: {
-    title(){
-      return this.text.split('\n')[0];
+    title() {
+      let t=this.text.split('\n')[0];
+      return t.split('#')[t.split('#').length-1];
     },
-    main1(){
-      return this.text.slice(this.title.length);
+    information() {
+      let len=this.text.split('\n')[0].length;
+      return this.text.slice(len+1);
+    },
+    time(){
+      let now=Date();
+      return now;
     }
   },
   methods: {
     addBlog() {
-    axios.post('http://localhost:3001/addblog',{
+      let now=Date("yy-mm-dd hh:mm:ss");
+      console.log(now);
+      console.log(this.time);
+      axios.request({
+        url:'http://localhost:3002/addblog',
+        method:'post',
+        params:{
+          blog: {
+            title: this.title,
+            information: this.information,
+            owner: 1,
+            send_time:this.now,
+            alter_time:this.now
+          }
+        }
+      }).then((value)=>{
+        if(value.data){
+          this.text="添加成功";
+        }
+      })
 
-    })
     }
   }
 };
@@ -42,6 +67,7 @@ export default {
 .v-md-editor {
   margin-top: 40px;
 }
+
 .button {
   margin-top: 30px;
 }

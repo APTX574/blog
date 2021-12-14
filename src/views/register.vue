@@ -34,39 +34,34 @@ export default {
     return {
       name: '',
       inter: '',
-      url: process.env.VUE_APP_BASE_URL
+      url:process.env.VUE_APP_BASE_URL
 
     }
   },
   methods: {
     getUser() {
-      axios.request({
-        url: `http://localhost:3002/user`,
-        method: 'post',
+      axios.get(`http://localhost:3000/user`, {
         params: {
-          user: 1
+          id: 0
         }
       }).then((value) => {
-        console.log(value.data);
-        this.inter = value.data.user_information;
-        this.name = value.data.user_name;
+        this.inter = value.data.inter;
+        this.name = value.data.userName
       })
-    }
+    },
   },
   created() {
     this.getUser();
   }
-
 }
 </script>
 <style>
 
-.set-dev {
+.set-dev{
   margin: 0 auto;
   padding-left: 20px;
 
 }
-
 .set {
   height: 500px;
   width: 1000px;

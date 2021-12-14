@@ -22,6 +22,21 @@ const routes = [
         path: '/show',
         name: 'show',
         component: () => import('../views/show')
+    },
+    {
+        path: '/register',
+        name: 'register',
+        component: () => import('../views/register')
+    },
+    {
+        path: '/discover',
+        name: 'discover',
+        component: () => import('../views/discover')
+    },
+    {
+        path: '/search',
+        name: 'search',
+        component: () => import('../views/search')
     }
 ]
 

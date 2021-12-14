@@ -39,6 +39,9 @@
           <el-menu-item @click="linkTo(5)" index="5">
             关于我们
           </el-menu-item>
+          <el-menu-item @click="linkTo(6)" index="6">
+            注册
+          </el-menu-item>
           <el-row>
             <el-col :span="12">
               <div class="grid-content bg-purple"></div>
@@ -46,14 +49,14 @@
             <el-col :span="8">
               <div class="grid-content bg-purple">
                 <el-input
-                    v-model="serchTexT"
+                    v-model="searchText"
                     placeholder="请输入关键词"
                 >
                 </el-input>
               </div>
             </el-col>
             <el-col :span="3">
-              <el-button type="primary">搜索博客</el-button>
+              <el-button type="primary" @click="search()">搜索博客</el-button>
             </el-col>
           </el-row>
         </el-menu>
@@ -79,39 +82,66 @@ export default {
     return {
       userName: "s",
       inter: `s`,
-      serchTexT: ''
+      searchText: '',
+    }
+  },
+  watch: {
+    my_reg: {
+      handle(datanew) {
+        if (datanew) {
+          this.userName = "欢迎注册";
+          this.inter = "woscnjizbvabfhuebvusdfvydbvyudfbvudvyu";
+        }
+      }
     }
   },
   methods: {
     getUser() {
-      axios.get('http://localhost:3001/user', {
-        params: {
-          id: 0
+      axios.request({
+        url:`http://localhost:3002/user`,
+        method:'post',
+        params:{
+          user: 1
         }
       }).then((value) => {
-        this.inter = value.data.inter;
-        this.userName = value.data.userName
-        console.log(value.data.userName)
+        this.inter = value.data.user_information;
+        this.userName = value.data.user_name;
+      })
+    },
+    search(){
+      this.$router.push({
+        path: '/search',
+        query: {
+          searchText: this.searchText
+        }
       })
     },
     linkTo(index) {
       switch (index) {
         case 1:
           this.$router.push('/');
+          this.my_reg = 0;
           break;
         case 2:
-          this.$router.push('/discove');
+          this.$router.push('/discover');
+          this.my_reg = 0;
           break;
         case 3:
           this.$router.push('/write');
+          this.my_reg = 0;
           break;
         case 4:
           this.$router.push('/setting');
+          this.my_reg = 0;
           break;
         case 5:
           this.$router.push('/about');
+          this.my_reg = 0;
           break;
-
+        case 6:
+          this.$router.replace('/register');
+          this.userName = "欢迎注册";
+          this.inter = "woscnjizbvabfhuebvusdfvydbvyudfbvudvyu";
       }
     }
   },
@@ -145,7 +175,7 @@ export default {
   color: var(--el-text-color-primary);
   /*text-align: center;*/
   line-height: 20px;
-  height: 700px;
+  height: 740px;
 }
 
 
@@ -188,7 +218,8 @@ export default {
 .fade-leave-to {
   opacity: 0;
 }
-.logo img{
+
+.logo img {
   width: 60px;
 }
 </style>
