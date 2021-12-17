@@ -8,15 +8,7 @@ import '@kangc/v-md-editor/lib/style/base-editor.css';
 import vuepressTheme from '@kangc/v-md-editor/lib/theme/vuepress.js';
 import '@kangc/v-md-editor/lib/theme/style/vuepress.css';
 // import axios from "axios";
-
 import VMdPreview from '@kangc/v-md-editor/lib/preview';
-
-VMdPreview.use(vuepressTheme, {
-    Prism,
-});
-
-
-
 import Web3 from "web3";
 // const Express = require('express');
 // const app = Express();
@@ -24,6 +16,14 @@ import Web3 from "web3";
 //   console.log(req.url);
 // })
 import BlogArtifact from "../build/contracts/Blog.json";
+import Prism from 'prismjs';
+import 'mavon-editor/dist/css/index.css'
+
+VMdPreview.use(vuepressTheme, {
+    Prism,
+});
+
+
 // import 'style-loader ! css-loader ./userPage.css';
 
 const cont = {
@@ -58,38 +58,61 @@ const cont = {
         const {
             register
         } = this.blog.methods;
-        let name = document.getElementById("name").value;
-        let content = document.getElementById("content").value;
-        let f = await register(name, content).send({
+        await register("name", "mas").send({
             from: this.account
-        });
-        console.log(content);
-        console.log(f);
+        }).then((value) => {
+            console.log(value);
+        })
+        // await register()
+        // // await register(23243).call()
+        // this.blog.events.creatuser('latest', {
+        //     filter: {}
+        // }, function (error,event) {
+        //     console.log(0+event.returnValues.t)
+        // })
 
     },
-    login: async function () {
-
-        window.location.href="userPage.html";
+    addBlog: async function (title,hashcode) {
         const {
-            login
+            addBlog
         } = this.blog.methods;
+        console.log(hashcode);
+        //
+        return await addBlog(hashcode, title).send({
+            from: this.account
+        })
+        // await register()
+        // // await register(23243).call()
+        // this.blog.events.creatuser('latest', {
+        //     filter: {}
+        // }, function (error,event) {
+        //     console.log(0+event.returnValues.t)
+        // })
 
+    },
+    // login: async function () {
+    //
+    //     window.location.href="userPage.html";
+    //     const {
+    //         login
+    //     } = this.blog.methods;
+    //
+    //
+    //     let userNameNode = document.getElementById('userName');
+    //     let interNode = document.getElementById('inter');
+    //     let user = await login().call();
+    //     userNameNode.innerHTML = user[0];
+    //     interNode.innerHTML = user[1]
 
-        let userNameNode = document.getElementById('userName');
-        let interNode = document.getElementById('inter');
-        let user = await login().call();
-        userNameNode.innerHTML = user[0];
-        interNode.innerHTML = user[1]
-
-    }
-
+    // }
 
 
 }
 
+
 window.cont = cont;
 
-Window.load=function (){
+Window.load = function () {
     if (window.ethereum) {
         // use MetaMask's provider
         cont.web3 = new Web3(window.ethereum);
@@ -119,29 +142,11 @@ Window.load=function (){
 // })
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 const app = createApp(App);
 app.use(ElementPlus);
 installElementPlus(app);
 app.use(VMdPreview);
 
-
-import Prism from 'prismjs';
 
 VueMarkdownEditor.use(vuepressTheme, {
     Prism,
@@ -149,6 +154,5 @@ VueMarkdownEditor.use(vuepressTheme, {
 // app.use(axios);
 
 app.use(VueMarkdownEditor);
-import 'mavon-editor/dist/css/index.css'
 
 app.use(router).mount('#app');

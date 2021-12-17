@@ -16,23 +16,42 @@ export default {
   name: 'search',
   data() {
     return {
-      blogs: [],
-      searchText:this.$route.query.searchText,
+      blogs:[],
+      searchText: this.$route.query.searchText,
 
     }
   },
+  beforeRouteUpdate(to, from, next) {
+    console.log(to, from, next)
+    if (to.fullPath !== from.fullPath) {
+      console.log(11111);
+      this.searchText = to.query.searchText;
+      this.searchBlogs();
+      next();
+    }
+  },
+  // watch:{
+  //   blogs: {
+  //     handle(datanew) {
+  //       if(datanew===[]){
+  //         return[{
+  //           title:'未能查询到'
+  //         }]
+  //       }
+  //     }
+  //   }
+  // },
   methods: {
     searchBlogs() {
       console.log(this.searchText);
       axios.get(`http://localhost:3002/search`, {
         params: {
-          msg:this.searchText
+          msg: this.searchText
         }
       }).then((value) => {
         console.log(value.data);
         this.blogs = value.data;
-
-      });
+      })
     },
     showBlog(id) {
       // console.log(id);
@@ -42,8 +61,9 @@ export default {
           blogId: id
         }
       })
-    },
+    }
   },
+
   created() {
     this.searchBlogs();
   }

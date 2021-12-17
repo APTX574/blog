@@ -14,6 +14,8 @@
 <script>
 import axios from "axios";
 
+import {sha256} from "js-sha256";
+
 export default {
   data() {
     return {
@@ -24,40 +26,48 @@ export default {
   },
   computed: {
     title() {
-      let t=this.text.split('\n')[0];
-      return t.split('#')[t.split('#').length-1];
+      let t = this.text.split('\n')[0];
+      return t.split('#')[t.split('#').length - 1];
     },
     information() {
-      let len=this.text.split('\n')[0].length;
-      return this.text.slice(len+1);
+      let len = this.text.split('\n')[0].length;
+      return this.text.slice(len + 1);
     },
-    time(){
-      let now=Date();
-      return now;
-    }
+
   },
   methods: {
     addBlog() {
-      let now=Date("yy-mm-dd hh:mm:ss");
-      console.log(now);
-      console.log(this.time);
-      axios.request({
-        url:'http://localhost:3002/addblog',
-        method:'post',
-        params:{
-          blog: {
-            title: this.title,
-            information: this.information,
-            owner: 1,
-            send_time:this.now,
-            alter_time:this.now
+      let hashcode='0x'+sha256(this.information);
+
+      window.cont.addBlog(this.title, hashcode).then(value => {
+        console.log(value);
+        let data=value.events.addBlog_event.returnValues;
+        let addtime=data.add_time;
+        let blogid=data.blog_id;
+        console.log(hashcode.length);
+        let blog={
+          title: this.title,
+          information: this.information,
+          owner: 1,
+          send_time:addtime,
+          alter_time:addtime,
+          hash_code:hashcode,
+          id:blogid
+        }
+        console.log(blog)
+        axios.post(
+            'http://localhost:3002/addblog',
+            {
+              blog: blog
+            }).then((value) => {
+              console.log(value);
+          if (value.data) {
+            this.text = JSON.stringify(blog);
+
           }
-        }
-      }).then((value)=>{
-        if(value.data){
-          this.text="添加成功";
-        }
+        })
       })
+
 
     }
   }

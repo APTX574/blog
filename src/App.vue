@@ -56,7 +56,7 @@
               </div>
             </el-col>
             <el-col :span="3">
-              <el-button type="primary" @click="search()">搜索博客</el-button>
+              <el-button type="primary" @click="web3">搜索博客</el-button>
             </el-col>
           </el-row>
         </el-menu>
@@ -73,7 +73,7 @@
 <script>
 
 import axios from "axios";
-
+// const web=window.cont;
 
 export default {
 
@@ -83,6 +83,7 @@ export default {
       userName: "s",
       inter: `s`,
       searchText: '',
+      blogs: []
     }
   },
   watch: {
@@ -97,18 +98,25 @@ export default {
   },
   methods: {
     getUser() {
-      axios.request({
-        url:`http://localhost:3002/user`,
-        method:'post',
-        params:{
-          user: 1
-        }
-      }).then((value) => {
+      axios.post(`http://localhost:3002/user`,
+
+          {
+            user: 1
+
+          }).then((value) => {
         this.inter = value.data.user_information;
         this.userName = value.data.user_name;
       })
     },
-    search(){
+    web3(){
+        window.cont.register().then((data)=>{
+          console.log(data);
+      })
+
+    },
+    search() {
+      console.log(this.searchText);
+      console.log(11);
       this.$router.push({
         path: '/search',
         query: {
@@ -148,7 +156,7 @@ export default {
 
   created() {
     this.getUser();
-    // Window.load();
+    Window.load();
 
   }
 }

@@ -1,60 +1,55 @@
 // SPDX-License-Identifier: GPL-3.0
 pragma solidity ^0.8.10;
 
+
 contract Blog {
-    struct User{
-        uint32 user_id;
+    event creatUser(bytes32 hash,uint256 userId);
+    event addBlog_event(uint256 blog_id,uint256 add_time);
+    uint256 blog_id;
+    string public s;
+    struct userStruct{
+        uint256 userId;
         string userName;
-        uint8 imgId;
-        bool used;
-   }
+        uint32 blogSum;
+        bytes32 hash;
+
+    }
     struct blogStruct{
-        uint32 blog_id;
+        uint256 blog_id;
         string title;
-        string content;
-        uint256 push_time;
+        bytes32 hash;
+        uint256 userId;
+        uint256 add_time;
         uint256 modify_time;
-       
-   }
-    uint32 user_id;
-    uint8 imgId;
-    mapping(address=>User)  userMap;
-    mapping(uint32=>blogStruct[]) blogMap;
-    
+
+    }
+    mapping(uint256=>address) userIdMap;
+    mapping(address=>userStruct)  userMap;
+    mapping(uint256=>uint256[]) userBlogs;
+    mapping(uint256=>blogStruct) blogMap;
     constructor() {
-        user_id=0;
+        blog_id=0;
+    }
+    function register(string memory mainMsg,string memory userName) public  payable returns(bytes32,uint256) {
 
-        imgId=0;
-    }
-    function register(string memory _name,string memory _intr) public  payable returns(uint8){
-        if(userMap[msg.sender].used){
-            return 0;
+        uint256  userId = uint256(keccak256(abi.encodePacked(block.difficulty, block.timestamp)))%1000000;
+        while(userBlogs[userId].length!=0){
+            userId = uint256(keccak256(abi.encodePacked(block.difficulty,  block.timestamp)))%1000000;
         }
-        if(blogMap[userMap[msg.sender].user_id].length!=0){
-            return 1;
-        }
-        userMap[msg.sender]=User(user_id++,_name,(imgId++)%8,true);
-        blogMap[user_id-1].push(blogStruct(0,"intr",_intr,block.timestamp,0));
-        return 2;
+        bytes32  hash=sha256(abi.encodePacked(userId,userName,mainMsg));
+        emit creatUser(hash,userId);
+        userMap[msg.sender]=userStruct(userId,userName,0,hash);
+        return (hash,userId);
     }
-    function login()public  view returns(string memory,uint8 ,string memory){
-        require(userMap[msg.sender].used);
-        return (userMap[msg.sender].userName , userMap[msg.sender].imgId , blogMap[userMap[msg.sender].user_id][0].content);
+    function vfUser(uint256  userId) public payable returns(bytes32){
+        return userMap[userIdMap[userId]].hash;
+    }
+    function addBlog(bytes32 hash,string memory title)public payable{
+        uint256 userid=userMap[msg.sender].userId;
+        blogMap[userid]=blogStruct(blog_id,title,hash,userid,block.timestamp,block.timestamp);
+        emit addBlog_event(blog_id,block.timestamp);
+        blog_id=blog_id+1;
 
-    }
-    function pushBlog(string memory _title,string memory _content ) public {
-        uint32 userId=userMap[msg.sender].user_id;
-        uint32 blog_id=uint32(blogMap[userId].length);
-        blogMap[userId].push(blogStruct(blog_id,_title,_content,block.timestamp,0));
-    }
-    function modifyBlog(uint32 _blog_id ,string memory _title,string memory _content ) public {
-        uint32 userId=userMap[msg.sender].user_id;
-        blogMap[userId][_blog_id].content=_content;
-        blogMap[userId][_blog_id].title=_title;
-        blogMap[userId][_blog_id].modify_time=block.timestamp;
-    }
-    function getBlog()public view returns(blogStruct[] memory){
-        return blogMap[userMap[msg.sender].user_id];
     }
 
 }
