@@ -51,5 +51,7 @@ contract Blog {
         blog_id=blog_id+1;
 
     }
-
+    function login()public payable returns (uint256){
+        return userMap[msg.sender].userId;
+    }
 }

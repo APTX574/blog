@@ -3,7 +3,7 @@
   <el-card class="set">
     <div class="set-dev">
 
-      <h2>个人信息</h2>
+      <h2>注册</h2>
       <el-row class="userName">
         <el-col :span=3><label>昵称：</label></el-col>
         <el-col :span=19>
@@ -18,8 +18,10 @@
         </el-col>
       </el-row>
       <el-row>
-        <el-button type="primary" id="setbut">提交修改</el-button>
+        <el-button type="primary" id="setbut" @click="register">注册</el-button>
+
       </el-row>
+
     </div>
 
   </el-card>
@@ -34,34 +36,62 @@ export default {
     return {
       name: '',
       inter: '',
-      url:process.env.VUE_APP_BASE_URL
 
     }
   },
   methods: {
-    getUser() {
-      axios.get(`http://localhost:3000/user`, {
-        params: {
-          id: 0
-        }
-      }).then((value) => {
-        this.inter = value.data.inter;
-        this.name = value.data.userName
-      })
-    },
+
+
+    register() {
+      if (window.userId!==undefined) {
+        this.$alert('即将跳转', '已经登录', {
+          confirmButtonText: '确定',
+          function () {
+            console.log(this);
+            this.$router.push('/home');
+          }
+        });
+      } else {
+        window.cont.register(this.name, this.inter).then( (value)=> {
+          let data = value.events.creatUser.returnValues;
+          let userId = data.userId;
+          let hashcode = data.hash;
+          axios.post("http://localhost:3002/register", {
+            user: {
+              id: userId,
+              hash_code: hashcode,
+              address: window.cont.account,
+              user_information: this.inter,
+              user_name: this.name
+            }
+          }).then( (data)=>{
+            if (data) {
+              window.userId = userId;
+              this.$alert('即将跳转', '注册成功', {
+                confirmButtonText: '确定',
+                callback:  ()=> {
+                  this.$router.push('/home');
+                }
+              });
+            }
+          })
+        })
+      }
+    }
+
   },
   created() {
-    this.getUser();
   }
 }
 </script>
 <style>
 
-.set-dev{
+.set-dev {
   margin: 0 auto;
   padding-left: 20px;
 
 }
+
 .set {
   height: 500px;
   width: 1000px;
@@ -84,4 +114,5 @@ export default {
   margin-top: 40px;
   margin-left: 430px;
 }
+
 </style>

@@ -1,10 +1,18 @@
 <template>
   <el-card>
     <h2>{{ blog.title }}</h2>
-    <div class="time">
-      <p>{{ blog.time }}</p>
-    </div>
+
     <v-md-preview :text=blog.information></v-md-preview>
+    <div class="time">
+      <p>发布于{{setTime( blog.send_time )}}</p>
+    </div>
+    <div class="time">
+      <p >最后修改于{{setTime( blog.send_time )}}</p>
+      <p>文章hash值为：{{blog.hash_code}}}</p>
+      <el-button type="primary" size="medium" round @click="addBlog">上区块链链验证文章</el-button>
+
+    </div>
+
   </el-card>
 </template>
 <script>
@@ -16,7 +24,7 @@ export default {
     return {
       blogId: this.$route.query.blogId,
       blog: {},
-      url: process.env.VUE_APP_BASE_URL
+
 
     }
   }, methods: {
@@ -27,11 +35,19 @@ export default {
         }
       }).then((value) => {
         this.blog = value.data[0];
-        console.log(this.blog);
-        // console.log(value.data)
-        // console.log(this.blogs[1].main)
+
       });
     },
+    setTime(timestamp) {
+      let date = new Date(timestamp * 1000);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
+      let Y = date.getFullYear() + '年';
+      let M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '月';
+      let D = (date.getDate() < 10 ? '0' + date.getDate() : date.getDate()) + '日';
+      let h = (date.getHours() < 10 ? '0' + date.getHours() : date.getHours()) + ':';
+      let m = (date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes());
+
+      return Y + M + D + h + m;
+    }
   }
   ,
   computed: {

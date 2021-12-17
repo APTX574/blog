@@ -10,7 +10,6 @@
     </div>
   </transition>
 </template>
-
 <script>
 import axios from "axios";
 
@@ -20,9 +19,12 @@ export default {
   data() {
     return {
       text: '',
-      url: process.env.VUE_APP_BASE_URL
+
 
     };
+  },
+  components:{
+
   },
   computed: {
     title() {
@@ -38,7 +40,6 @@ export default {
   methods: {
     addBlog() {
       let hashcode='0x'+sha256(this.information);
-
       window.cont.addBlog(this.title, hashcode).then(value => {
         console.log(value);
         let data=value.events.addBlog_event.returnValues;
@@ -48,30 +49,39 @@ export default {
         let blog={
           title: this.title,
           information: this.information,
-          owner: 1,
+          owner: window.userId,
           send_time:addtime,
           alter_time:addtime,
           hash_code:hashcode,
           id:blogid
         }
-        console.log(blog)
+        // console.log(blog)
         axios.post(
             'http://localhost:3002/addblog',
             {
               blog: blog
             }).then((value) => {
               console.log(value);
-          if (value.data) {
-            this.text = JSON.stringify(blog);
-
-          }
         })
+        this.$alert(`发布内容哈希：
+        ${hashcode.slice(0,33)}
+        ${hashcode.slice(33,66)}
+        ${'\t\t区块高度：'+value.blockNumber}
+        ${'\t\t gas花费：'+value.gasUsed}`, '发布成功', {
+          confirmButtonText: '确定',
+          // callback: action => {
+          //   this.$message({
+          //     type: '',
+          //     message: ` `
+          //   });
+          // }
+        });
       })
-
-
     }
-  }
-};
+  },
+
+}
+
 </script>
 <style>
 .v-md-editor {

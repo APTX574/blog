@@ -7,14 +7,14 @@
       <el-row class="userName">
         <el-col :span=3><label>昵称：</label></el-col>
         <el-col :span=19>
-          <el-input v-model="name"></el-input>
+          <el-input v-model="name1"></el-input>
         </el-col>
       </el-row>
 
       <el-row class="textarea">
         <el-col :span=3><label>简介：</label></el-col>
         <el-col :span=19>
-          <el-input type="textarea" rows="11" v-model="inter"></el-input>
+          <el-input type="textarea" rows="11" v-model="inter1"></el-input>
         </el-col>
       </el-row>
       <el-row>
@@ -32,24 +32,22 @@ export default {
   name: 'setting',
   data() {
     return {
-      name: '',
-      inter: '',
+      name1: '',
+      inter1: '',
       url: process.env.VUE_APP_BASE_URL
 
     }
   },
   methods: {
     getUser() {
-      axios.request({
-        url: `http://localhost:3002/user`,
-        method: 'post',
+      axios.get(`http://localhost:3002/user`, {
         params: {
-          user: 1
+          user: window.userId
         }
       }).then((value) => {
         console.log(value.data);
-        this.inter = value.data.user_information;
-        this.name = value.data.user_name;
+        this.inter1 = value.data.user_information;
+        this.name1 = value.data.user_name;
       })
     }
   },

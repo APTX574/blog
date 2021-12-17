@@ -3,7 +3,7 @@ import home from '../views/home.vue'
 
 const routes = [
     {
-        path: '/',
+        path: '/home',
         name: 'home',
         component: home
     },
@@ -37,12 +37,30 @@ const routes = [
         path: '/search',
         name: 'search',
         component: () => import('../views/search')
-    }
+    },
+
 ]
 
 const router = createRouter({
     history: createWebHistory(process.env.BASE_URL),
     routes
 })
+// router.beforeEach((to, from, next)=>{
+//     const list = ['/home', '/write', 'setting'];
+//     if (list.indexOf(to.name) !== -1&&window.userId===undefined) {
+//         this.$alert('请点击登录界面', '还未登录', {
+//             confirmButtonText: '确定',
+//             callback: () => {
+//                 this.$message({
+//                     type: 'warning',
+//                     message: `请点击登录`
+//                 });
+//             }
+//         })
+//         router.replace('/discover')
+//     }else{
+//         next();
+//     }
+// })
 
 export default router

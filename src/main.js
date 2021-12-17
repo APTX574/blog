@@ -18,7 +18,7 @@ import Web3 from "web3";
 import BlogArtifact from "../build/contracts/Blog.json";
 import Prism from 'prismjs';
 import 'mavon-editor/dist/css/index.css'
-
+// app.use(axios);
 VMdPreview.use(vuepressTheme, {
     Prism,
 });
@@ -54,25 +54,16 @@ const cont = {
             console.error("Could not connect to contract or chain.");
         }
     },
-    register: async function () {
+    register: async function (name,inter) {
         const {
             register
         } = this.blog.methods;
-        await register("name", "mas").send({
+        return await register(inter, name).send({
             from: this.account
-        }).then((value) => {
-            console.log(value);
         })
-        // await register()
-        // // await register(23243).call()
-        // this.blog.events.creatuser('latest', {
-        //     filter: {}
-        // }, function (error,event) {
-        //     console.log(0+event.returnValues.t)
-        // })
 
     },
-    addBlog: async function (title,hashcode) {
+    addBlog: async function (title, hashcode) {
         const {
             addBlog
         } = this.blog.methods;
@@ -81,30 +72,15 @@ const cont = {
         return await addBlog(hashcode, title).send({
             from: this.account
         })
-        // await register()
-        // // await register(23243).call()
-        // this.blog.events.creatuser('latest', {
-        //     filter: {}
-        // }, function (error,event) {
-        //     console.log(0+event.returnValues.t)
-        // })
 
     },
-    // login: async function () {
-    //
-    //     window.location.href="userPage.html";
-    //     const {
-    //         login
-    //     } = this.blog.methods;
-    //
-    //
-    //     let userNameNode = document.getElementById('userName');
-    //     let interNode = document.getElementById('inter');
-    //     let user = await login().call();
-    //     userNameNode.innerHTML = user[0];
-    //     interNode.innerHTML = user[1]
+    login: async function () {
+        const {
+            login
+        } = this.blog.methods;
+        return await login().call()
 
-    // }
+    }
 
 
 }

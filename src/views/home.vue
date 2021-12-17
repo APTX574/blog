@@ -1,11 +1,14 @@
 <template>
   <transition :name="fade">
     <div>
-      <el-card v-for="blog in blogs" :key="blog.id">
+      <el-card v-show="blog.length!==1" v-for="blog in blogs" :key="blog.id">
         <h2 @click="showBlog(blog.id)">{{ blog.title }}</h2>
         <v-md-preview :text=blog.information.substring(0,100)></v-md-preview>
         <div class="time">{{ setTime(blog.send_time) }}</div>
       </el-card>
+
+      <el-empty v-show="blogs.length===0" description="description"></el-empty>
+
     </div>
   </transition>
 </template>
@@ -17,24 +20,38 @@ export default {
   data() {
     return {
       blogs: [],
-      blog: {},
       url: process.env.VUE_APP_BASE_URL
     }
+  }, beforeRouteUpdate(to, from, next) {
+    console.log(to, from, next)
+    this.getBlogs();
+    next();
+
   },
   methods: {
     getBlogs() {
-      if (this.blogs.length === 0) {
-        axios.get(`http://localhost:3002/showblogs`, {
-          params: {
-            owner: 1
-          }
-        }).then((value) => {
-          this.blogs = value.data.reverse();
-          // console.log(value.data);
-          // console.log(this.blogs);
-          // console.log(value.data)
-          // console.log(this.blogs[1].main)
-        });
+      {
+        console.log(window.userId)
+        if (window.userId !== undefined) {
+
+          axios.get(`http://localhost:3002/showblogs`, {
+            params: {
+              owner: window.userId
+            }
+          }).then((value) => {
+            // if(value.data.length===0){
+            //   this.blogs={title:"您还未发布任何内容"};
+            //   console.log('ew');
+            //
+            // }else{
+            //   this.blogs = value.data.reverse();
+            //   console.log(value.data.length);
+            //   console.log('q');
+            //   console.log(this.blogs);
+            // }
+            this.blogs = value.data.reverse();
+          });
+        }
       }
     },
     showBlog(id) {
@@ -48,9 +65,10 @@ export default {
     },
     setTime(timestamp) {
       let date = new Date(timestamp * 1000);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
-      let Y = date.getFullYear() + '-';
-      let M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '-';
-      let D = (date.getDate() < 10 ? '0' + date.getDate() : date.getDate()) + ' ';
+
+      let Y = date.getFullYear() + '年';
+      let M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '月';
+      let D = (date.getDate() < 10 ? '0' + date.getDate() : date.getDate()) + '日';
       let h = (date.getHours() < 10 ? '0' + date.getHours() : date.getHours()) + ':';
       let m = (date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes()) + ':';
       let s = date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds();
